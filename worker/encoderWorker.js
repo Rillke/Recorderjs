@@ -45,6 +45,19 @@
 		fr.readAsArrayBuffer( blob );
 	}
 
+	/**
+	 * Copy values from a Float32Array into a buffer presented by a DataView
+	 * in 16 bit linear pulse-code modulation (PCM)
+	 *
+	 *  @param {DataView}        output  DataView on a buffer the values will be
+	 *                                   copied to
+	 *  @param {number}          offset  Byte position at the target buffer at
+	 *                                   which to start copying from input
+	 *  @param {Float32Array}     input  Typed array typically containing values
+	 *                                   between -1 and 1; everything greater will
+	 *                                   be chopped off
+	 *  @private
+	 */
 	function floatTo16BitPCM( output, offset, input ) {
 		for ( var i = 0; i < input.length; i++, offset += 2 ) {
 			var s = Math.max( -1, Math.min( 1, input[ i ] ) );
@@ -52,6 +65,15 @@
 		}
 	}
 
+	/**
+	 * Copy a source buffer to a target (destination) buffer
+	 *
+	 *  @param {ArrayBuffer}  bufferSrc  Source buffer
+	 *  @param {ArrayBuffer} bufferDest  Target buffer
+	 *  @param {number}          offset  Offset in the target buffer where writing
+	 *                                   data from source buffer should start from
+	 *  @private
+	 */
 	function copyBufferToBuffer( bufferSrc, bufferDest, offset ) {
 		offset = offset || 0;
 		var ui8aSrc = new Uint8Array( bufferSrc ),
@@ -68,16 +90,32 @@
 		}
 	}
 
+	/**
+	 * Write a string into a buffer
+	 *
+	 *  @param {DataView}     view  Size to be encoded
+	 *  @param {number}     offset  Offset in the view where string writing
+	 *                              should start
+	 *  @param {string}     string  String to be written
+	 *  @private
+	 */
 	function writeString( view, offset, string ) {
 		for ( var i = 0; i < string.length; i++ ) {
 			view.setUint8( offset + i, string.charCodeAt( i ) );
 		}
 	}
 
+
 	/**
-	 *  From the [ID3 spec](http://id3.org/id3v2.3.0)
-	 *  "where the most significant bit (bit 7) is set to zero in every byte,
+	 * Convert a number into its 7 bit representation
+	 *
+	 * From the [ID3 spec](http://id3.org/id3v2.3.0)
+	 * "where the most significant bit (bit 7) is set to zero in every byte,
 	 *  making a total of 28 bits"
+	 *
+	 *  @param {number}       size  Size to be encoded
+	 *  @return {string}            Seven bit per byte encoded size
+	 *  @private
 	 */
 	function encodeID3Size( size ) {
 		var sizeEnc = '';
@@ -93,12 +131,20 @@
 		}
 		return sizeEnc;
 	}
-
+	 
 	/**
-	 *  "All Unicode strings use 16-bit unicode 2.0
-	 *  (ISO/IEC 10646-1:1993, UCS-2).
+	 * Copy a string into a buffer and prepend a byte-order-marker.
+	 * Warning:
+	 * May result in wrong results if a code point advances the Basic Multilingual
+	 * Plane.
+	 *
+	 * "All Unicode strings use 16-bit unicode 2.0 (ISO/IEC 10646-1:1993, UCS-2).
 	 *  Unicode strings must begin with the Unicode BOM ($FF FE or $FE FF)
 	 *  to identify the byte order."
+	 *
+	 *  @param {string}       domString  String to be encoded
+	 *  @return {ArrayBuffer}            Buffer containing the encoded data
+	 *  @private
 	 */
 	function ucs2Encode( domString ) {
 		var len = domString.length,
@@ -114,9 +160,18 @@
 		return buffer;
 	}
 
+
 	/**
-	 *  This is not a proper encoder, yet. There are glyphs consisting of
-	 *  multiple bytes that should be properly encoded as a single question mark
+	 * Replace characters whose char code advances the 256 (8 bit) range - 1 with
+	 * a question mark.
+	 * Merely a sanitizer to avoid "strange looking characters" or misinformation.
+	 * Warning:
+	 * This is not a proper encoder. There are glyphs consisting of multiple bytes
+	 * that should be properly encoded as a single question mark
+	 *
+	 *  @param {string}       domString  String to be encoded
+	 *  @return {ArrayBuffer}            Buffer containing the encoded data
+	 *  @private
 	 */
 	function iso8859Encode( domString ) {
 		var len = domString.length,
@@ -139,7 +194,20 @@
 	}
 
 	/**
-	 *  Asynchroneously encodes a ID3 frame
+	 * Asynchroneously encode a ID3 frame from the provided frameID, frame data and
+	 * invoke the callback upon completion
+	 *
+	 *  @param {string}             frameID  ID3v2 frame ID (four characters)
+	 *  @param {Object}                data  Valid data for the provided frameID
+	 *  @param {string}          data.value  Data
+	 *  @param {string}  [data.description]  Short description of the data or in case
+	 *                                       of a custom frame, the "key"; note that
+	 *                                       whether it's optional or not depends on
+	 *                                       the provided frameID
+	 *  @param {string}     [data.language]  ISO-639-2 language identifier
+	 *  @param {Function}                cb  Callback invoked upon completion of the
+	 *                                       operation
+	 *  @private
 	 */
 	function encodeID3Frame( frameID, data, cb ) {
 		var size = new ArrayBuffer( 4 ),
@@ -208,6 +276,15 @@
 		} );
 	}
 
+	/**
+	 * For the provided total tag size, create the id3v2.3 header
+	 *
+	 *  @param {number}         size   Size of the full id3v2.3 tag without
+	 *                                 its header (= sum of the size of all frames)
+	 *  @return {ArrayBuffer}          ArrayBuffer containing the encoded
+	 *                                 id3v2.3 header
+	 *  @private
+	 */
 	function id3v2Header( size ) {
 		// "ID3" + version + flags + size
 		var buff = new ArrayBuffer( 3 + 2 + 1 + 4 ),
@@ -228,6 +305,18 @@
 		return buff;
 	}
 
+	/**
+	 * For the provided tags, create a complete id3v2.3 tag and invoke the
+	 * supplied callback when completed
+	 *
+	 *  @param {Object}         tags   Metadata: Key-value map
+	 *                                 C.f. metaTags.js for possible tags
+	 *  @param {Function}         cb   Callback invoked upon completion
+	 *                                 of the operation
+	 *  @param {ArrayBuffer} cb.data   ArrayBuffer containing formatted
+	 *                                 metadata
+	 *  @private
+	 */
 	function id3v2Tag( tags, cb ) {
 		/*jshint forin:false */
 		// https://github.com/jshint/jshint/commit/090ec1c69cbf9968fd8fe3b42552d43eb70f2e4d
@@ -280,6 +369,18 @@
 		checkDone();
 	}
 
+	/**
+	 * For the provided tags, create a complete id3v2.3 tag enclosed in
+	 * a RIFF chunk and invoke the supplied callback when completed
+	 *
+	 *  @param {Object}         tags   Metadata: Key-value map
+	 *                                 C.f. metaTags.js for possible tags
+	 *  @param {Function}         cb   Callback invoked upon completion
+	 *                                 of the operation
+	 *  @param {ArrayBuffer} cb.data   ArrayBuffer containing formatted
+	 *                                 metadata
+	 *  @private
+	 */
 	function id3RiffChunk( tags, cb ) {
 		// Chunk types that are used only in a certain form type use
 		// a lowercase chunk ID.
@@ -304,15 +405,26 @@
 			readBlobAsArrayBuffer( id3Chunk, cb );
 		} );
 	}
-
+	 
 	/**
+	 * Create a chunk with correct size set, its value encoded as zString
+	 * (string with no size but terminating null character) and padding but
+	 * without ckID, however with 4 bytes space for it reserved in the
+	 * beginning of the buffer returned
+	 *
 	 *  To quote from taglib:
-	 *   RIFF Info tag has no clear definitions about character encodings.
+	 *  "RIFF Info tag has no clear definitions about character encodings.
 	 *   In practice, local encoding of each system is largely used and UTF-8 is
-	 *   popular too.
-	 *  Well, there is a CSET (Character Set) Chunk but I doubt this is widely
+	 *   popular too."
+	 *  There is a CSET (Character Set) chunk but it's probably not broadly
 	 *  understood by software and is a little complex.
-	 *  So we let the decision up to the user.
+	 *  So the decision is up to the user of this wonderful library.
+	 *
+	 *  @param {String}    domString   Chunk data (value)
+	 *  @return {ArrayBuffer}          Chunk with size set, data encoded as
+	 *                                 zString and padding and 4 null bytes
+	 *                                 reserved for the ckID at the start
+	 *  @private
 	 */
 	function encodeRiffZstrChunk( domString ) {
 		var len = 0,
@@ -377,16 +489,34 @@
 	}
 
 	/**
-	 *  A single chunk within the info list chunk
+	 * Create and return a RIFF LIST INFO chunk item (which is itself a chunk)
+	 *
+	 *  @param {Object}      metaTag   Object containing the meta tags's name
+	 *                                 in RIFF notation (aka ckID)
+	 *  @param {string} metaTag.riff   CkID of the tag to encode
+	 *  @param {string}   chunkValue   String holding the tag's (chunk's)
+	 *                                 value
+	 *  @return {ArrayBuffer}          ArrayBuffer containing the RIFF LIST
+	 *                                 INFO chunk item
+	 *  @private
 	 */
-	function infoChunkItem( metaTag, metadataValue ) {
-		var buff = encodeRiffZstrChunk( metadataValue ),
+	function infoChunkItem( metaTag, chunkValue ) {
+		var buff = encodeRiffZstrChunk( chunkValue ),
 			view = new DataView( buff );
 
 		writeString( view, 0, metaTag.riff );
 		return buff;
 	}
 
+	/**
+	 * Creates and returns the RIFF LIST INFO header
+	 *
+	 *  @param {ArrayBuffer[]} infoChunkItems  Array containing the full LIST INFO
+	 *                                         contents stored in ArrayBuffers
+	 *  @return {ArrayBuffer}                  ArrayBuffer containing the RIFF LIST
+	 *                                         INFO header
+	 *  @private
+	 */
 	function infoChunkHeader( infoChunkItems ) {
 		var size = 0,
 			buff = new ArrayBuffer( 12 ),
@@ -414,9 +544,8 @@
 	 *                                 fully encoded
 	 *  @param {ArrayBuffer}  cb.data  ArrayBuffer containing formatted
 	 *                                 metadata
-	 *  @private
 	 */
-	function formatMetadata( metadata, cb ) {
+	global.formatMetadata = function( metadata, cb ) {
 		var k, riffInfoChunks = [],
 			metadataChunks;
 		for ( k in metaTags ) {
@@ -500,7 +629,7 @@
 			}
 		}
 
-		formatMetadata( metadata, function( metaBuff ) {
+		global.formatMetadata( metadata, function( metaBuff ) {
 			var buffLen = 44 + samples.length * 2;
 			var buffer = new ArrayBuffer( buffLen + metaBuff.byteLength );
 			var view = new DataView( buffer );
