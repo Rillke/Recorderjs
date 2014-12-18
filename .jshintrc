@@ -15,11 +15,12 @@
 	"quotmark": "single",
 	"undef": true,
 	"unused": true,
-	"strict": false,
+	"strict": true,
 	"trailing": true,
 
 	"node": false,
 
 	"onevar": true,
-	"white": true
+	"white": true,
+	"laxbreak": true
 }

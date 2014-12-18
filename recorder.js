@@ -24,7 +24,7 @@
  */
 
 /*jslint vars: false,  white: false */
-/*jshint onevar: false, white: false */
+/*jshint onevar: false, white: false, laxbreak: true */
 ( function( window ) {
 	'use strict';
 

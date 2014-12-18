@@ -25,7 +25,7 @@
 
 /*global self: false, importScripts: false */
 /*jslint vars: false,  white: false */
-/*jshint onevar: false, white: false */
+/*jshint onevar: false, white: false, laxbreak: true */
 ( function( global ) {
 	'use strict';
 	var recLength = 0,

@@ -23,9 +23,10 @@
  * IN THE SOFTWARE.
  */
 
-/*global self: false, TextEncoder: false, unescape: false */
+/*global self: false, TextEncoder: false, FileReaderSync: false, unescape: false */
 /*jslint vars: false,  white: false */
-/*jshint onevar: false, white: false */
+/*jshint onevar: false, white: false, laxbreak: true */
+
 ( function( global, metaTags, recorderWorkerConfig ) {
 	'use strict';
 
@@ -573,7 +574,7 @@
 
 			readBlobAsArrayBuffer( metadataChunks, cb );
 		} );
-	}
+	};
 
 	/**
 	 * Given raw audio data, PCM (samples), a sample rate and metadata,
@@ -590,7 +591,7 @@
 	 */
 	global.encodeWAV = function( samples, sampleRate, metadata, cb ) {
 		var recorderSoftware = 'Wikimedia Pronunciation Recording Gadget '
-			//+ 'https://github.com/Rillke/Recorderjs https://rillke.com/';
+			+ 'https://github.com/Rillke/Recorderjs https://rillke.com/';
 
 		if ( !metadata ) {
 			metadata = {
@@ -621,12 +622,12 @@
 				id3Data: {
 					value: 'Pronunciation Recording'
 				}
-			}
+			};
 		}
 		if ( !metadata.name ) {
 			metadata.name = {
 				riffData: 'Pronunciation Recording'
-			}
+			};
 		}
 
 		global.formatMetadata( metadata, function( metaBuff ) {
