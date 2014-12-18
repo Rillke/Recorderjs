@@ -1,6 +1,6 @@
 # Recorder.js
 
-[![Build Status](https://travis-ci.org/Rillke/Recorderjs.svg?branch=master)](https://travis-ci.org/Rillke/Recorderjs) [![Coverage Status](https://coveralls.io/repos/Rillke/Recorderjs/badge.png)](https://coveralls.io/r/Rillke/Recorderjs)
+[![Build Status](https://travis-ci.org/Rillke/Recorderjs.svg?branch=master)](https://travis-ci.org/Rillke/Recorderjs) [![Coverage Status](https://img.shields.io/coveralls/Rillke/Recorderjs.svg)](https://coveralls.io/r/Rillke/Recorderjs)
 ---------
 
 ## A plugin for recording/exporting the output of Web Audio API nodes
