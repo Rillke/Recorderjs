@@ -21,12 +21,16 @@
     "name": "Rainer Rillke",
     "web": "https://rillke.com"
   },
+  "contributors": [
+    "Rainer Rillke (https://rillke.com/)"
+  ],
   "main": "./recorder.js",
   "scripts": {
     "test": "grunt test && node test/node-index.js"
   },
   "dependencies": {},
   "devDependencies": {
+    "coveralls": "~2.11.2",
     "qunit": "~0.5.15",
     "grunt": "~0.4.1",
     "grunt-contrib-jshint": "~0.4.3",
