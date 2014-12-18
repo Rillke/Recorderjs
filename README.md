@@ -6,7 +6,7 @@
 ## A plugin for recording/exporting the output of Web Audio API nodes
 
 ### Demo
-[Live input record and playback](https://rawgit.com/Rillke/Recorderjs/master/example_simple_exportwav.html)
+[Live input record and playback](https://rawgit.com/Rillke/Recorderjs/master/index.html)
 
 ### Syntax
 #### Constructor
