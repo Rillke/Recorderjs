@@ -1,0 +1,36 @@
+{
+  "name": "Recorderjs",
+  "version": "0.0.1",
+  "description": "plugin for recording/exporting the output of Web Audio API nodes",
+  "keywords": [
+    "plugin"
+  ],
+  "homepage": "https://rillke.github.io/Recorderjs",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/Rillke/Recorderjs.git"
+  },
+  "bugs": "https://github.com/Rillke/Recorderjs/issues",
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://mit-license.org/"
+    }
+  ],
+  "author": {
+    "name": "Rainer Rillke",
+    "web": "https://rillke.com"
+  },
+  "main": "./recorder.js",
+  "scripts": {
+    "test": "grunt test && node test/node-index.js"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "qunit": "~0.5.15",
+    "grunt": "~0.4.1",
+    "grunt-contrib-jshint": "~0.4.3",
+    "grunt-contrib-qunit": "~0.2.1",
+    "qunitjs": "~1.11.0"
+  }
+}
