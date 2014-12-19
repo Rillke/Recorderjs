@@ -69,13 +69,16 @@
 		var bufferL = mergeBuffers( recBuffersL, recLength );
 		var bufferR = mergeBuffers( recBuffersR, recLength );
 		var interleaved = interleave( bufferL, bufferR );
-		global.encodeWAV( interleaved, sampleRate, metadata, function( dataview ) {
-			var audioBlob = new Blob( [ dataview ], {
-				type: type
-			} );
+		new Wave()
+			.addWaveData( interleaved, sampleRate )
+			.setMetaData( metadata )
+			.readAsArrayBuffer( function( dataview ) {
+				var audioBlob = new Blob( [ dataview ], {
+					type: type
+				} );
 
-			global.postMessage( audioBlob );
-		} );
+				global.postMessage( audioBlob );
+			} );
 	}
 
 	function getBuffer() {

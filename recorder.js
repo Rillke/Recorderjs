@@ -50,7 +50,9 @@
 			config: {
 				sampleRate: this.context.sampleRate,
 				rootPath: config.workerRootPath || ROOT_WORKER_PATH,
-				imports: [ 'metaTags.js', 'encoderWorker.js', 'lib/encoding-indexes.js', 'lib/encoding.js' ]
+				recorderSoftware: 'Wikimedia Pronunciation Recording Gadget '
+					+ 'https://github.com/Rillke/Recorderjs https://rillke.com/',
+				imports: [ 'metaTags.js', 'Id3v2.js', 'Wave.js', 'Encoding.js', 'lib/encoding-indexes.js', 'lib/encoding.js' ]
 			}
 		} );
 		var recording = false,

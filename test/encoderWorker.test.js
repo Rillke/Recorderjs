@@ -1,19 +1,11 @@
 QUnit.module( 'General' );
 
+var global = self;
 QUnit.test( 'Basic health tests', 1, function ( assert ) {
-	var metadata = {
-		album: {
-			id3Data: {
-				value: 'Pronunciation Album'
-			}
-		},
-		userDefinedTextInformationFrame: {
-			id3Data: {
-				description: 'Description',
-				value: 'value'
-			}
-		}
+	global.recorderWorkerConfig = {
+		recorderSoftware: 'Foo Bar Baz Software Services AG'
 	};
 
-	assert.strictEqual( formatMetadata( metadata, function(){} ), undefined, 'formatMetadata should not return anything' );
+	var wave = new Wave();
+	assert.strictEqual( wave.setMetaData().formatMetadata( function(){} ), wave, 'formatMetadata should not throw errors' );
 } );
