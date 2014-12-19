@@ -269,7 +269,7 @@
 				// Size = size of frame - header size
 				// header size is always 10, according to the spec
 				sizeEnc = frameBuff.byteLength - 10;
-				// Funnily, a single frame could be bigger than the
+				// Interestingly, a single frame could be bigger than the
 				// whole id3 tag (8 bits per byte used to encode size)
 				view.setUint32( 4, sizeEnc, false );
 				buff = frameBuff;

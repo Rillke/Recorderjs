@@ -32,6 +32,7 @@
 	/**
 	 * Encoding utitlites
 	 *  @class Encoding
+	 *  @singleton
 	 */
 	global.Encoding = {
 
@@ -42,7 +43,6 @@
 		 *  @param {Function}         cb  Callback invoked upon completion of the
 		 *                                operation
 		 *  @param {ArrayBuffer} cb.data  ArrayBuffer containing a copy of the Blob data
-		 *  @static
 		 */
 		readBlobAsArrayBuffer: function readBlobAsArrayBuffer( blob, cb ) {
 			var frs, fr;
@@ -71,7 +71,6 @@
 		 *  @param {Float32Array}     input  Typed array typically containing values
 		 *                                   between -1 and 1; everything greater will
 		 *                                   be chopped off
-		 *  @static
 		 */
 		floatTo16BitPCM: function floatTo16BitPCM( output, offset, input ) {
 			for ( var i = 0; i < input.length; i++, offset += 2 ) {
@@ -87,7 +86,6 @@
 		 *  @param {ArrayBuffer} bufferDest  Target buffer
 		 *  @param {number}          offset  Offset in the target buffer where writing
 		 *                                   data from source buffer should start from
-		 *  @static
 		 */
 		copyBufferToBuffer: function copyBufferToBuffer( bufferSrc, bufferDest, offset ) {
 			offset = offset || 0;
@@ -112,7 +110,6 @@
 		 *  @param {number}     offset  Offset in the view where string writing
 		 *                              should start
 		 *  @param {string}     string  String to be written
-		 *  @static
 		 */
 		writeString: function writeString( view, offset, string ) {
 			for ( var i = 0; i < string.length; i++ ) {
@@ -129,7 +126,6 @@
 		 *
 		 *  @param {number}       size  Size to be encoded
 		 *  @return {string}            Seven bit per byte encoded size
-		 *  @static
 		 */
 		id3Size: function id3Size( size ) {
 			var sizeEnc = '';
@@ -158,7 +154,6 @@
 		 *
 		 *  @param {string}       domString  String to be encoded
 		 *  @return {ArrayBuffer}            Buffer containing the encoded data
-		 *  @static
 		 */
 		ucs2Encode: function ucs2Encode( domString ) {
 			var len = domString.length,
@@ -184,7 +179,6 @@
 		 *
 		 *  @param {string}       domString  String to be encoded
 		 *  @return {ArrayBuffer}            Buffer containing the encoded data
-		 *  @static
 		 */
 		iso8859Encode: function iso8859Encode( domString ) {
 			var len = domString.length,
