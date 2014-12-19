@@ -33,6 +33,6 @@ module.exports = function( grunt ) {
 		}
 	} );
 
-	grunt.registerTask( 'test', [ 'jshint', 'qunit', 'jsduck' ] );
+	grunt.registerTask( 'test', [ 'jshint', 'qunit' ] );
 	grunt.registerTask( 'default', [ 'test' ] );
 };
